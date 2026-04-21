@@ -1,0 +1,44 @@
+# # backend/.env
+# # __pycache__/
+# # node_modules/
+
+# # Node modules (frontend)
+# frontend/node_modules/
+
+# # Python virtual env (backend)
+# backend/venv/
+
+# # Environment variables
+# .env
+# backend/.env
+# frontend/.env
+
+# # Cache / logs
+# __pycache__/
+# *.log
+
+# # OS files
+# .DS_Store
+# Thumbs.db
+
+
+
+
+# Frontend
+frontend/node_modules/
+
+# Backend
+backend/venv/
+__pycache__/
+
+# Env files
+.env
+backend/.env
+frontend/.env
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -23,11 +23,12 @@ app = FastAPI(title="EvaEraHealth OTP API")
 
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=["*"],          # tighten to your domain in production
-    allow_origins=[
-        "https://clever-sprinkles-3d7234.netlify.app"
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],          # tighten to your domain in production
+    # allow_origins=[
+    #     "https://clever-sprinkles-3d7234.netlify.app"
+    # ],
+    # allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

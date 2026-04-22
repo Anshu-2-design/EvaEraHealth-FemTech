@@ -2,7 +2,7 @@ var SUPABASE_URL  = 'https://ilxgfycqdxzfqnxcycpn.supabase.co';
 var SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlseGdmeWNxZHh6ZnFueGN5Y3BuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDgyMjcsImV4cCI6MjA5MTY4NDIyN30.rTSj6Q13jFVYuE8CWt-MV31X0RTbB9IuCU-jfbZWK8E';
 
 
-/* On-screen diagnostic banner */
+/*  On-screen diagnostic banner  */
 function _sbShowBanner(type, msg) {
   var existing = document.getElementById('sb-status-banner');
   if (existing) existing.remove();
@@ -26,7 +26,7 @@ function _sbShowBanner(type, msg) {
   if (type === 'success') setTimeout(function(){ div.remove(); }, 5000);
 }
 
-/* Low-level REST insert  */
+/* Low-level REST insert */
 function _sbInsert(table, record) {
   return fetch(SUPABASE_URL + '/rest/v1/' + table, {
     method: 'POST',
@@ -47,13 +47,65 @@ function _sbInsert(table, record) {
   });
 }
 
-/* Map S.answers + S.scores → flat row matching your schema */
+/*Save session to Supabase*/
+/* Called right after OTP verify (authenticated) or startGuest()            */
+function saveSessionToSupabase() {
+  if (!S.session || !S.session.id) return;
+
+  var row = {
+    session_id: S.session.id,
+    auth_id:    S.session.authId || null,
+    is_guest:   S.session.id.indexOf('guest_') === 0,
+    created_at: S.session.ts || new Date().toISOString()
+  };
+
+  console.log('[Supabase] Saving session →', row);
+
+  _sbInsert('sessions', row)
+    .then(function() {
+      console.log('[Supabase] ✓ Session saved');
+    })
+    .catch(function(err) {
+      console.error('[Supabase] ✗ Session save failed:', err.message);
+    });
+}
+
+/* Save consent record to Supabase */
+/* Called inside proceedAfterConsent() after user accepts consent            */
+function saveConsentToSupabase() {
+  if (!S.session || !S.session.id) return;
+
+  var cd = S.consentData || {};
+
+  var row = {
+    session_id:           S.session.id,
+    consent_timestamp:    S.consentTimestamp || new Date().toISOString(),
+    c1_health_data:       cd['c1'] === true,
+    c2_wearable_data:     cd['c2'] === true,
+    c3_ayurvedic_profile: cd['c3'] === true,
+    c4_ai_processing:     cd['c4'] === true,
+    c5_share_hcp:         cd['c5'] === true,
+    c6_research:          cd['c6'] === true,
+    c7_corporate:         cd['c7'] === true
+  };
+
+  console.log('[Supabase] Saving consent →', row);
+
+  _sbInsert('consent_records', row)
+    .then(function() {
+      console.log('[Supabase] ✓ Consent saved');
+    })
+    .catch(function(err) {
+      console.error('[Supabase] ✗ Consent save failed:', err.message);
+    });
+}
+
+/* Map S.answers + S.scores → flat row matching assessments schema */
 function buildSupabaseRow() {
   var a     = S.answers       || {};
   var sc    = S.scores        || {};
   var comor = a.comorbidities || {};
 
-  // Returns null for empty/undefined values
   function n(v) { return (v !== undefined && v !== null && v !== '') ? v : null; }
   function num(v) {
     if (v == null || isNaN(v)) return null;
@@ -61,33 +113,31 @@ function buildSupabaseRow() {
   }
 
   return {
-    session_id: n(S.session ? S.session.id : 'guest'),
+    // Identity
+    patient_ref: n(S.session ? S.session.id : 'guest'),
+    session_id:  n(S.session ? S.session.id : null),
 
-    // Demographics 
+    // Demographics
     full_name:        n(a.name),
     age:              n(a.age),
     city:             n(a.city),
-    country:          n(a.country),
-    ethnicity:        n(a.ethnicity),
     height_cm:        n(a.height_cm),
     weight_kg:        n(a.weight_kg),
     bmi:              num(a.bmi),
+    menstrual_status: n(a.menstrual_status),
     marital_status:   n(a.marital),
     occupation:       n(a.occupation),
-    education:        n(a.education),
-    smoking_history:  n(a.smoking_history),
-    alcohol_use:      n(a.alcohol_use),
-    hrt_history:      n(a.hrt_history),
-    parity:           n(a.parity),
+    highest_education: n(a.education),
     prakriti:         n(a.prakriti),
     vikriti:          n(a.vikriti),
+    wearable_device:  n(a.wearable),
 
-    // Red Flags 
+    // Red Flags
     rf1_unusual_vaginal_bleeding: n(a.rf1 !== undefined ? (a.rf1 ? 'Yes' : 'No') : null),
     rf2_persistent_pelvic_pain:   n(a.rf2 !== undefined ? (a.rf2 ? 'Yes' : 'No') : null),
     rf3_breast_changes:           n(a.rf3 !== undefined ? (a.rf3 ? 'Yes' : 'No') : null),
 
-    // MenQOL Vasomotor 
+    // MenQOL Vasomotor
     mq_v1_hot_flushes:      n(a.mq_v1),
     mq_v2_night_sweats:     n(a.mq_v2),
     mq_v3_daytime_sweating: n(a.mq_v3),
@@ -105,7 +155,7 @@ function buildSupabaseRow() {
     mq_p7_hair_loss:          n(a.mq_p7),
     mq_p8_appearance_concern: n(a.mq_p8),
 
-    // MenQOL Psychosocial 
+    // MenQOL Psychosocial
     mq_ps1_anxiety:          n(a.mq_ps1),
     mq_ps2_loss_of_interest: n(a.mq_ps2),
     mq_ps3_depression:       n(a.mq_ps3),
@@ -114,12 +164,12 @@ function buildSupabaseRow() {
     mq_ps6_brain_fog:        n(a.mq_ps6),
     mq_ps7_low_motivation:   n(a.mq_ps7),
 
-    // ── MenQOL Sexual 
+    // MenQOL Sexual
     mq_s1_reduced_desire:    n(a.mq_s1),
     mq_s2_vaginal_dryness:   n(a.mq_s2),
     mq_s3_avoiding_intimacy: n(a.mq_s3),
 
-    // ── ISI
+    // ISI
     isi_0_difficulty_falling_asleep: n(a.isi_0),
     isi_1_difficulty_staying_asleep: n(a.isi_1),
     isi_2_early_awakening:           n(a.isi_2),
@@ -128,28 +178,24 @@ function buildSupabaseRow() {
     isi_5_worried_about_sleep:       n(a.isi_5),
     isi_6_daytime_interference:      n(a.isi_6),
 
-    // ── Wearable 
-    wearable_device: n(a.wearable),
-
-    // ── Comorbidities
-    comor_hypertension:    n(comor['Hypertension']),
-    comor_diabetes:        n(comor['Diabetes']),
-    comor_hypothyroidism:  n(comor['Hypothyroidism']),
-    comor_hyperthyroidism: n(comor['Hyperthyroidism']),
-    comor_hyperlipidemia:  n(comor['Hyperlipidemia']),
-    comor_anaemia:         n(comor['Anaemia']),
-    comor_pcod:            n(comor['PCOD']),
-    comor_osteoporosis:    n(comor['Osteoporosis']),
-    comor_heart_disease:   n(comor['Heart Disease']),
-    comor_ckd:             n(comor['CKD']),
-    comor_autoimmune:      n(comor['Autoimmune Disorder']),
-    comor_stroke:          n(comor['Stroke (history)']),
-    comor_cancer:          n(comor['Cancer (history)'])
- 
+    // Comorbidities
+    comor_hypertension:        n(comor['Hypertension']),
+    comor_diabetes:            n(comor['Diabetes']),
+    comor_hypothyroidism:      n(comor['Hypothyroidism']),
+    comor_hyperthyroidism:     n(comor['Hyperthyroidism']),
+    comor_hyperlipidemia:      n(comor['Hyperlipidemia']),
+    comor_anaemia:             n(comor['Anaemia']),
+    comor_pcod:                n(comor['PCOD']),
+    comor_osteoporosis:        n(comor['Osteoporosis']),
+    comor_heart_disease:       n(comor['Heart Disease']),
+    comor_ckd:                 n(comor['CKD']),
+    comor_autoimmune_disorder: n(comor['Autoimmune Disorder']),
+    comor_stroke_history:      n(comor['Stroke (history)']),
+    comor_cancer_history:      n(comor['Cancer (history)'])
   };
 }
 
-/* Main save — called directly from results.js */
+/*Main assessment save — called from results.js*/
 function saveToSupabase() {
 
   if (!SUPABASE_URL || SUPABASE_URL.indexOf('YOUR_PROJECT_ID') !== -1 ||
@@ -164,13 +210,14 @@ function saveToSupabase() {
   }
 
   var row = buildSupabaseRow();
-  console.log('[Supabase] Saving →', row);
+  console.log('[Supabase] Saving assessment →', row);
 
-  _sbInsert('patient_assessments', row)
+  _sbInsert('assessments', row)
     .then(function() {
-      console.log('[Supabase] ✓ Saved successfully');
+      console.log('[Supabase] ✓ Assessment saved successfully');
     })
     .catch(function(err) {
-      console.error('[Supabase] ✗ Failed:', err.message);
+      console.error('[Supabase] ✗ Assessment save failed:', err.message);
     });
 }
+

@@ -26,6 +26,7 @@ app.add_middleware(
     allow_origins=[
         "https://clever-sprinkles-3d7234.netlify.app"
     ],
+    #  allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],

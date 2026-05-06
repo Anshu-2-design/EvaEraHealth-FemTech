@@ -80,7 +80,7 @@ function saveSessionToSupabase() {
 
   var row = {
     session_id: S.session.id,
-    email_id:   S.session.emailId || null,
+    email_id:   S.session.authId || null,
     is_guest:   S.session.id.indexOf('guest_') === 0,
     created_at: _istNow()
   };
@@ -193,8 +193,8 @@ function buildSupabaseRow() {
     country:           n(a.country),
     height_cm:         num(a.height_cm),
     weight_kg:         num(a.weight_kg),
-    bmi:               _calcBmi(a.weight_kg, a.height_cm),  // calculated
-    menstrual_status:  n(a.stage),              // fixed: a.stage not a.menstrual_status
+    bmi:               _calcBmi(a.weight_kg, a.height_cm),  
+    menstrual_status:  n(a.stage),              
     menstrual_pattern: n(a.menstrual_pattern),
     marital_status:    n(a.marital),
     occupation:        n(a.occupation),

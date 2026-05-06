@@ -27,6 +27,7 @@ function startProcessing(){
     S.psychiatricAlert=S.triage.some(function(t){return t.action==='psychiatric_alert';});
     saveResult();
     if (typeof saveToSupabase === 'function') saveToSupabase();
+    saveDemographicsToSupabase();
     setTimeout(function(){showResults();},1500);
   },3000);
 }

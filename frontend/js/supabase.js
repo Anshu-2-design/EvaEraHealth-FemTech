@@ -2,15 +2,17 @@ var SUPABASE_URL  = 'https://ilxgfycqdxzfqnxcycpn.supabase.co';
 var SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlseGdmeWNxZHh6ZnFueGN5Y3BuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDgyMjcsImV4cCI6MjA5MTY4NDIyN30.rTSj6Q13jFVYuE8CWt-MV31X0RTbB9IuCU-jfbZWK8E';
 
 
-/*  On-screen diagnostic banner  */
+/*On-screen diagnostic banner*/
 function _sbShowBanner(type, msg) {
   var existing = document.getElementById('sb-status-banner');
   if (existing) existing.remove();
+
   var colors = {
     warn:    { bg: '#FFF8E1', border: '#F9A825', text: '#5D4037' },
     error:   { bg: '#FFEBEE', border: '#C62828', text: '#B71C1C' },
     success: { bg: '#E8F5E9', border: '#2E7D32', text: '#1B5E20' }
   };
+
   var c = colors[type] || colors.warn;
   var div = document.createElement('div');
   div.id = 'sb-status-banner';
@@ -26,7 +28,8 @@ function _sbShowBanner(type, msg) {
   if (type === 'success') setTimeout(function(){ div.remove(); }, 5000);
 }
 
-/* Low-level REST insert */
+
+/*Low-level REST insert*/
 function _sbInsert(table, record) {
   return fetch(SUPABASE_URL + '/rest/v1/' + table, {
     method: 'POST',
@@ -47,16 +50,39 @@ function _sbInsert(table, record) {
   });
 }
 
+
+/*Helper — current date as plain IST date string
+   Format: "2026-05-01"*/
+function _istNow() {
+  var now    = new Date();
+  var offset = 5.5 * 60 * 60 * 1000;
+  var ist    = new Date(now.getTime() + offset);
+
+  var yyyy = ist.getUTCFullYear();
+  var mm   = String(ist.getUTCMonth() + 1).padStart(2, '0');
+  var dd   = String(ist.getUTCDate()).padStart(2, '0');
+
+  return yyyy + '-' + mm + '-' + dd;
+}
+
+
+/*Helper — calculate BMI from height and weight*/
+function _calcBmi(weight_kg, height_cm) {
+  if (!weight_kg || !height_cm) return null;
+  var h = height_cm / 100;
+  return parseFloat((weight_kg / (h * h)).toFixed(1));
+}
+
+
 /*Save session to Supabase*/
-/* Called right after OTP verify (authenticated) or startGuest()            */
 function saveSessionToSupabase() {
   if (!S.session || !S.session.id) return;
 
   var row = {
     session_id: S.session.id,
-    auth_id:    S.session.authId || null,
+    email_id:   S.session.emailId || null,
     is_guest:   S.session.id.indexOf('guest_') === 0,
-    created_at: S.session.ts || new Date().toISOString()
+    created_at: _istNow()
   };
 
   console.log('[Supabase] Saving session →', row);
@@ -67,11 +93,12 @@ function saveSessionToSupabase() {
     })
     .catch(function(err) {
       console.error('[Supabase] ✗ Session save failed:', err.message);
+      _sbShowBanner('error', '✗ Session save failed:<br>' + err.message);
     });
 }
 
-/* Save consent record to Supabase */
-/* Called inside proceedAfterConsent() after user accepts consent            */
+
+/*Save consent record to Supabase*/
 function saveConsentToSupabase() {
   if (!S.session || !S.session.id) return;
 
@@ -79,7 +106,7 @@ function saveConsentToSupabase() {
 
   var row = {
     session_id:           S.session.id,
-    consent_timestamp:    S.consentTimestamp || new Date().toISOString(),
+    created_at:           _istNow(),
     c1_health_data:       cd['c1'] === true,
     c2_wearable_data:     cd['c2'] === true,
     c3_ayurvedic_profile: cd['c3'] === true,
@@ -97,13 +124,55 @@ function saveConsentToSupabase() {
     })
     .catch(function(err) {
       console.error('[Supabase] ✗ Consent save failed:', err.message);
+      _sbShowBanner('error', '✗ Consent save failed:<br>' + err.message);
     });
 }
 
-/* Map S.answers + S.scores → flat row matching assessments schema */
+
+/*Save patient demographics to Supabase*/
+function saveDemographicsToSupabase() {
+  if (!S.session || !S.session.id) return;
+
+  var a = S.answers || {};
+
+  function n(v) {
+    return (v !== undefined && v !== null && v !== '') ? v : null;
+  }
+  function num(v) {
+    if (v == null || isNaN(v)) return null;
+    return parseFloat(parseFloat(v).toFixed(1));
+  }
+
+  var row = {
+    session_id:        S.session.id,
+    full_name:         n(a.name),
+    age:               n(a.age),
+    city:              n(a.city),
+    height_cm:         num(a.height_cm),
+    weight_kg:         num(a.weight_kg),
+    bmi:               _calcBmi(a.weight_kg, a.height_cm),  // calculated
+    marital_status:    n(a.marital),
+    occupation:        n(a.occupation),
+    highest_education: n(a.education),
+    created_at:        _istNow()
+  };
+
+  console.log('[Supabase] Saving demographics →', row);
+
+  _sbInsert('patient_demographics', row)
+    .then(function() {
+      console.log('[Supabase] ✓ Demographics saved');
+    })
+    .catch(function(err) {
+      console.error('[Supabase] ✗ Demographics save failed:', err.message);
+      _sbShowBanner('error', '✗ Demographics save failed:<br>' + err.message);
+    });
+}
+
+
+/*Map S.answers → flat row matching assessments schema*/
 function buildSupabaseRow() {
   var a     = S.answers       || {};
-  var sc    = S.scores        || {};
   var comor = a.comorbidities || {};
 
   function n(v) { return (v !== undefined && v !== null && v !== '') ? v : null; }
@@ -114,23 +183,30 @@ function buildSupabaseRow() {
 
   return {
     // Identity
-    patient_ref: n(S.session ? S.session.id : 'guest'),
-    session_id:  n(S.session ? S.session.id : null),
+    session_id:   n(S.session ? S.session.id : null),
+    created_at:   _istNow(),
 
     // Demographics
-    full_name:        n(a.name),
-    age:              n(a.age),
-    city:             n(a.city),
-    height_cm:        n(a.height_cm),
-    weight_kg:        n(a.weight_kg),
-    bmi:              num(a.bmi),
-    menstrual_status: n(a.menstrual_status),
-    marital_status:   n(a.marital),
-    occupation:       n(a.occupation),
+    full_name:         n(a.name),
+    age:               n(a.age),
+    city:              n(a.city),
+    country:           n(a.country),
+    height_cm:         num(a.height_cm),
+    weight_kg:         num(a.weight_kg),
+    bmi:               _calcBmi(a.weight_kg, a.height_cm),  // calculated
+    menstrual_status:  n(a.stage),              // fixed: a.stage not a.menstrual_status
+    menstrual_pattern: n(a.menstrual_pattern),
+    marital_status:    n(a.marital),
+    occupation:        n(a.occupation),
     highest_education: n(a.education),
-    prakriti:         n(a.prakriti),
-    vikriti:          n(a.vikriti),
-    wearable_device:  n(a.wearable),
+    ethnicity:         n(a.ethnicity),
+    hrt_history:       n(a.hrt_history),
+    parity:            n(a.parity),
+    smoking_history:   n(a.smoking_history),
+    alcohol_use:       n(a.alcohol_use),
+    prakriti:          n(a.prakriti),
+    vikriti:           n(a.vikriti),
+    wearable_device:   n(a.wearable),
 
     // Red Flags
     rf1_unusual_vaginal_bleeding: n(a.rf1 !== undefined ? (a.rf1 ? 'Yes' : 'No') : null),
@@ -195,7 +271,9 @@ function buildSupabaseRow() {
   };
 }
 
-/*Main assessment save — called from results.js*/
+
+/*Main assessment save
+   Called from results.js*/
 function saveToSupabase() {
 
   if (!SUPABASE_URL || SUPABASE_URL.indexOf('YOUR_PROJECT_ID') !== -1 ||
@@ -206,6 +284,7 @@ function saveToSupabase() {
 
   if (window.location.protocol === 'file:') {
     console.error('[Supabase] file:// protocol — use a local HTTP server.');
+    _sbShowBanner('error', '✗ Please use a local HTTP server, not file://');
     return;
   }
 
@@ -215,9 +294,10 @@ function saveToSupabase() {
   _sbInsert('assessments', row)
     .then(function() {
       console.log('[Supabase] ✓ Assessment saved successfully');
+      _sbShowBanner('success', '✓ Assessment saved successfully.');
     })
     .catch(function(err) {
       console.error('[Supabase] ✗ Assessment save failed:', err.message);
+      _sbShowBanner('error', '✗ Assessment save failed:<br>' + err.message);
     });
 }
-

@@ -36,9 +36,6 @@ evaerahealth/
 │   ├── triage_flags.json
 │   └── demo_config.json
 │
-└── README.md
+└── 
 ```
 
-## How to Run
-
-Open `index.html` in a browser — no build step required.

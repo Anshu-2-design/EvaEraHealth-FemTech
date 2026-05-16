@@ -385,7 +385,7 @@ function buildWearableRecord(a){
 }
 function saveResult(){
   loadPatients();var a=S.answers;
-  var patient={id:'P'+Date.now(),name:a.name||'Anonymous',age:a.age||'—',city:a.city||'—',stage:a.stage||'—',menstrual_pattern:a.menstrual_pattern||'—',prakriti:a.prakriti||'Tridosha',vikriti:(a.vikriti||'—').replace(/_/g,' '),marital:a.marital||'—',occupation:a.occupation||'—',education:a.education||'—',sexual_activity_status:a.sexual_activity_status||'—',scores:S.scores,triage:S.triage,psychiatricAlert:S.psychiatricAlert,redFlags:S.redFlagsTriggered,flags:S.flags,comorbidities:a.comorbidities||{},wearable:buildWearableRecord(a),wearable_data:a.wearable_data||{},timestamp:new Date().toISOString(),sessionId:S.session?S.session.id:'guest',composite:S.scores.composite,consentTimestamp:S.consentTimestamp||'',answers:a};
+  var patient={id:'P'+Date.now(),name:a.name||'Anonymous',age:a.age||'—',city:a.city||'—',stage:a.stage||'—',menstrual_pattern:a.menstrual_pattern||'—',prakriti:a.prakriti||'Tridosha',vikriti:(a.vikriti||'—').replace(/_/g,' '),marital:a.marital||'—',occupation:a.occupation||'—',education:a.education||'—',sexual_activity_status:a.sexual_activity_status||'—',scores:S.scores,triage:S.triage,psychiatricAlert:S.psychiatricAlert,redFlags:S.redFlagsTriggered,flags:S.flags,comorbidities:a.comorbidities||{},wearable:buildWearableRecord(a),wearable_data:a.wearable_data||{},timestamp:new Date().toISOString(),sessionId:S.session?S.session.id:'guest',authId:S.session?S.session.authId||null:null,composite:S.scores.composite,consentTimestamp:S.consentTimestamp||'',answers:a};
   var dup=S.patients.find(function(p){return p.sessionId===patient.sessionId&&(new Date()-new Date(p.timestamp))<300000;});
   if(dup)S.patients[S.patients.indexOf(dup)]=patient;
   else S.patients.unshift(patient);
@@ -393,7 +393,3 @@ function saveResult(){
   savePatients();
   try{localStorage.setItem('evr_answers_v7',JSON.stringify({answers:a,flags:S.flags,step:S.currentStep,ts:new Date().toISOString()}));}catch(e){}
 }
-// ── QUICK DEMO FILL ─────────────────────────────────────────────
-// Single function — no confirm() dialog, works immediately on click.
-// User flow: Patient Portal → Continue as Guest → Accept All & Begin
-//            → form-screen → click ⚡ Demo Fill

@@ -267,7 +267,10 @@ function buildSupabaseRow() {
     comor_ckd:                 n(comor['CKD']),
     comor_autoimmune_disorder: n(comor['Autoimmune Disorder']),
     comor_stroke_history:      n(comor['Stroke (history)']),
-    comor_cancer_history:      n(comor['Cancer (history)'])
+    comor_cancer_history:      n(comor['Cancer (history)']),
+
+    scores: S.scores ? JSON.parse(JSON.stringify(S.scores)) : null,
+    triage: S.triage ? JSON.parse(JSON.stringify(S.triage)) : null
   };
 }
 

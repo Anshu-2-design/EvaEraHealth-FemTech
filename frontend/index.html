@@ -40,12 +40,16 @@
       <div class="auth-tab" onclick="authTab('register')">Register</div>
     </div>
     <div id="auth-login">
-      <div class="form-group"><label>Mobile / Email</label><input type="text" id="login-id" placeholder="+91 98765 43210"></div>
+      <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="login-name" placeholder="Your registered name">
+    </div>
+      <div class="form-group"><label>Mobile / Email</label><input type="text" id="login-id" placeholder="+91 98765 43210 or you@example.com"></div>
       <button class="btn-auth" onclick="sendOTP('login')">Send OTP →</button>
     </div>
     <div id="auth-register" style="display:none">
       <div class="form-group"><label>Full Name</label><input type="text" id="reg-name" placeholder="Your name"></div>
-      <div class="form-group"><label>Mobile</label><input type="text" id="reg-mobile" placeholder="+91 98765 43210"></div>
+      <div class="form-group"><label>Mobile/Email</label><input type="text" id="reg-mobile" placeholder="+91 98765 43210 or you@example.com"></div>
       <button class="btn-auth" onclick="sendOTP('register')">Send OTP →</button>
     </div>
     <div id="auth-otp" style="display:none">
@@ -240,23 +244,29 @@
           <div id="adm-e1" style="background:rgba(153,27,27,0.25);border:1px solid rgba(153,27,27,0.5);border-radius:8px;padding:9px 12px;font-size:12px;color:#FCA5A5;margin-bottom:12px;display:none">&#x26A0; Invalid email or password</div>
           <div style="margin-bottom:14px">
             <label style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px">Email</label>
-            <input type="email" id="adm-em" value="admin@evaerahealth.in" style="width:100%;padding:11px 14px;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;font-size:13px;outline:none;color:#fff;box-sizing:border-box" onfocus="this.style.borderColor='rgba(92,45,145,0.7)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+            <!-- <input type="email" id="adm-em" value="admin@evaerahealth.in" style="width:100%;padding:11px 14px;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;font-size:13px;outline:none;color:#fff;box-sizing:border-box" onfocus="this.style.borderColor='rgba(92,45,145,0.7)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'"> -->
+            <input type="email" id="adm-em" placeholder="admin@evaerahealth.in" autocomplete="email" style="width:100%;padding:11px 14px;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;font-size:13px;outline:none;color:#fff;box-sizing:border-box" onfocus="this.style.borderColor='rgba(92,45,145,0.7)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'"...>
           </div>
           <div style="margin-bottom:18px">
             <label style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px">Password</label>
-            <input type="password" id="adm-pw" value="Admin@2026" style="width:100%;padding:11px 14px;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;font-size:13px;outline:none;color:#fff;box-sizing:border-box" onfocus="this.style.borderColor='rgba(92,45,145,0.7)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+            <!-- <input type="password" id="adm-pw" value="Admin@2026" style="width:100%;padding:11px 14px;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;font-size:13px;outline:none;color:#fff;box-sizing:border-box" onfocus="this.style.borderColor='rgba(92,45,145,0.7)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'"> -->
+           <input type="password" id="adm-pw" placeholder="Your password" autocomplete="current-password" style="width:100%;padding:11px 14px;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;font-size:13px;outline:none;color:#fff;box-sizing:border-box" onfocus="this.style.borderColor='rgba(92,45,145,0.7)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'"...>
           </div>
           <button onclick="admVPass()" style="width:100%;padding:12px;background:linear-gradient(135deg,#5C2D91,#7B3FC2);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">Continue &#x2192;</button>
-          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:9px 12px;font-size:11px;color:rgba(255,255,255,0.35);margin-top:14px">
+          <!-- <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:9px 12px;font-size:11px;color:rgba(255,255,255,0.35);margin-top:14px">
             &#x1F511; Demo: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e48580898d8aa48192858196858c818588908cca8d8a">[email&#160;protected]</a> / Admin@2026
-          </div>
+          </div> -->
         </div>
         <!-- STEP 2: TOTP -->
         <div id="adm-s2" style="display:none">
           <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">2FA Verification</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:18px">Enter your 6-digit Google Authenticator code</div>
-          <div id="adm-e2" style="background:rgba(153,27,27,0.25);border:1px solid rgba(153,27,27,0.5);border-radius:8px;padding:9px 12px;font-size:12px;color:#FCA5A5;margin-bottom:12px;display:none">&#x26A0; Invalid TOTP code. Try again.</div>
-          <label style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);display:block;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Authenticator Code</label>
+          <!-- <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:18px">Enter your 6-digit Google Authenticator code</div> -->
+           <div id="adm-otp-hint" style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:18px">
+      OTP is being sent to your registered email...
+    </div>
+          <!-- <div id="adm-e2" style="background:rgba(153,27,27,0.25);border:1px solid rgba(153,27,27,0.5);border-radius:8px;padding:9px 12px;font-size:12px;color:#FCA5A5;margin-bottom:12px;display:none">&#x26A0; Invalid TOTP code. Try again.</div> -->
+          <div id="adm-e2" style="background:rgba(153,27,27,0.25);border:1px solid rgba(153,27,27,0.5);border-radius:8px;padding:9px 12px;font-size:12px;color:#FCA5A5;margin-bottom:12px;display:none">&#x26A0; Invalid or expired OTP. Please Try again.</div>
+          <label style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);display:block;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">OTP</label>
           <div id="adm-otp-row" style="display:flex;gap:6px;margin-bottom:18px;max-width:280px">
             <input maxlength="1" id="ao0" oninput="intOTPnx(this,'adm-otp-row')" style="flex:1;text-align:center;width:38px;flex:none;padding:7px 0;font-size:16px;font-weight:700;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);border-radius:10px;outline:none;color:#fff;font-family:monospace;text-align:center">
             <input maxlength="1" id="ao1" oninput="intOTPnx(this,'adm-otp-row')" style="flex:1;text-align:center;width:38px;flex:none;padding:7px 0;font-size:16px;font-weight:700;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);border-radius:10px;outline:none;color:#fff;font-family:monospace;text-align:center">
@@ -266,9 +276,16 @@
             <input maxlength="1" id="ao5" oninput="intOTPnx(this,'adm-otp-row')" style="flex:1;text-align:center;width:38px;flex:none;padding:7px 0;font-size:16px;font-weight:700;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.15);border-radius:10px;outline:none;color:#fff;font-family:monospace;text-align:center">
           </div>
           <button onclick="admVTOTP()" style="width:100%;padding:12px;background:linear-gradient(135deg,#5C2D91,#7B3FC2);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">Verify &amp; Enter Portal &#x2192;</button>
+          <button id="adm-resend-btn" onclick="admResendOTP()"
+      style="width:100%;margin-top:8px;padding:9px;background:transparent;
+             border:1px solid rgba(255,255,255,0.2);border-radius:9px;
+             font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer">
+      ↺ Resend OTP
+    </button>
           <div style="display:flex;gap:10px;margin-top:12px">
             <button onclick="document.getElementById('adm-s2').style.display='none';document.getElementById('adm-s1').style.display='block';document.getElementById('adm-si2').style.background='rgba(255,255,255,0.15)';" style="flex:1;padding:9px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:9px;font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer">&#x2190; Back</button>
-            <div style="flex:2;background:rgba(255,255,255,0.05);border-radius:9px;padding:9px 11px;font-size:11px;color:rgba(255,255,255,0.3)">&#x1F511; Demo: any 6 digits e.g. <strong style="color:rgba(255,255,255,0.5)">123456</strong></div>
+            <!-- <div style="flex:2;background:rgba(255,255,255,0.05);border-radius:9px;padding:9px 11px;font-size:11px;color:rgba(255,255,255,0.3)">&#x1F511; Demo: any 6 digits e.g. <strong style="color:rgba(255,255,255,0.5)">123456</strong></div> -->
+            <div style="flex:2;background:rgba(255,255,255,0.05);border-radius:9px;padding:9px 11px;font-size:11px;color:rgba(255,255,255,0.3)">&#x1F511;  📧 OTP sent to your admin email. <strong style="color:rgba(255,255,255,0.5)">Check your inbox</strong></div>
           </div>
         </div>
         <button onclick="intShowLauncher()" style="width:100%;margin-top:16px;padding:9px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:9px;font-size:12px;color:rgba(255,255,255,0.35);cursor:pointer">&#x2190; Portal Selection</button>
@@ -481,6 +498,7 @@
 <!-- TOAST CONTAINER -->
 <div id="int-toast-c" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none"></div>
 <!-- INTEGRATION BOOKING SCREEN -->
+ <div id="patient-dashboard-screen" class="screen"></div>
 <div id="int-bk-screen" class="screen">
   <div style="max-width:600px;margin:0 auto;padding:24px 16px">
     <div style="margin-bottom:14px">
@@ -528,5 +546,13 @@
 <script src="js/supabase.js?"></script>
 <script src="js/results.js"></script>
 <script src="js/send-report.js?v=1"></script>
+<script src="js/patient-dashboard.js"></script>
+
+ <script>
+      // Set your FastAPI backend URL here
+      window.ADMIN_API_URL = "http://127.0.0.1:8000";
+      // Dev: window.ADMIN_API_URL = "http://localhost:8000";
+    </script>
+    <script src="js/admin-2fa.js"></script>
 </body>
 </html> 

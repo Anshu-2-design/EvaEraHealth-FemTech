@@ -1,0 +1,59 @@
+[33mcommit e349ee0059e83814aa52bc5c629d644640cf0aef[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Anshu-2-design <anshubirhmaan2002@gmail.com>
+Date:   Wed May 6 16:10:38 2026 +0530
+
+    Updated db
+
+[33mcommit 85add66e5ce2f5ada7797388272bf29f0947c0ac[m
+Author: Anshu-2-design <anshubirhmaan2002@gmail.com>
+Date:   Wed May 6 11:15:56 2026 +0530
+
+    Updated Email, Report
+
+[33mcommit 9a0fda15aa80c52666307579e42fd121a4a2e7e9[m
+Author: Anshu-2-design <anshubirhmaan2002@gmail.com>
+Date:   Wed Apr 22 16:31:13 2026 +0530
+
+    Fix db
+
+[33mcommit eff63265e88b6cac049991d7f03391f56cb77ce7[m
+Author: Anshu-2-design <anshubirhmaan2002@gmail.com>
+Date:   Wed Apr 22 14:32:19 2026 +0530
+
+    Fix CORS for Netlify frontend
+
+[33mcommit b98432a5851ad8459d56a5edd88c08452de55383[m
+Author: Anshu-2-design <anshubirhmaan2002@gmail.com>
+Date:   Wed Apr 22 14:24:12 2026 +0530
+
+    Fix CORS configuration
+
+[33mcommit 119f54cdea6c90b628bd6ea4e58c9876424b5e17[m
+Author: Anshu-2-design <anshubirhmaan2002@gmail.com>
+Date:   Wed Apr 22 14:08:15 2026 +0530
+
+    Fix CORS for Netlify frontend
+
+[33mcommit 101c4102432cc6d74b9761234359be02beae6f80[m
+Author: Anshu-2-design <anshubirhmaan2002@gmail.com>
+Date:   Wed Apr 22 13:51:15 2026 +0530
+
+    Update frontend to use Render backend URL
+
+[33mcommit 52bbef7c797fcb6d4e2afc2704772ee9073488df[m
+Author: Anshu-2-design <anshubirhmaan2002@gmail.com>
+Date:   Wed Apr 22 12:43:13 2026 +0530
+
+    backend setup
+
+[33mcommit ed7cfef747fd20e4c7f3834869721f8c39347a94[m
+Author: Anshu-2-design <anshubirhmaan2002@gmail.com>
+Date:   Wed Apr 22 10:57:07 2026 +0530
+
+    fix: pin python version for render
+
+[33mcommit c813492ecaf51afb704041137d048a88ed2399b4[m
+Author: Anshu-2-design <anshubirhmaan2002@gmail.com>
+Date:   Tue Apr 21 11:18:58 2026 +0530
+
+    Initial commit

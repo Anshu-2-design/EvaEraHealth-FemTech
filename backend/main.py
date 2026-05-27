@@ -492,6 +492,14 @@ def send_report(body: SendReportRequest):
         raise HTTPException(502, "Failed to send report email. Please try again.")
     return {"success": True, "message": f"Report sent to {email}"}
 
+@app.get("/config")
+def get_client_config():
+    # Only expose what the frontend actually needs
+    return {
+        "supabase_url": SUPABASE_URL,
+        "supabase_key": SUPABASE_KEY
+    }
+
 
 @app.get("/health")
 def health():

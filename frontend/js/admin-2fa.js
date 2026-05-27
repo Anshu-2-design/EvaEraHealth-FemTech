@@ -1,7 +1,9 @@
 // EvaEraHealth — Admin 2FA (real email OTP via backend)
 
 // Config 
-var ADMIN_API = window.ADMIN_API_URL || "https://api.evaerahealth.in";
+// var ADMIN_API = window.ADMIN_API_URL || "https://api.evaerahealth.in";
+var ADMIN_API = window.ADMIN_API_URL || "https://evaerahealth-femtech.onrender.com";
+
 
 // State 
 var _admEmail         = "";

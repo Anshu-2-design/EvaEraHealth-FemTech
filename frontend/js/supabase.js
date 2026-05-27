@@ -394,7 +394,8 @@ function _loadConfig() {
 
   var backendBase = (typeof OTP_BACKEND_URL !== 'undefined')
     ? OTP_BACKEND_URL
-    : 'http://localhost:8000';
+    // : 'http://localhost:8000';
+    : 'https://YOUR-BACKEND.onrender.com';
 
   console.log('[Config] Fetching Supabase credentials from', backendBase + '/config');
 

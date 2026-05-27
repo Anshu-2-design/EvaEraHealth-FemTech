@@ -739,6 +739,7 @@
 /* Consent, Session & Auth */
 
 var OTP_BACKEND_URL = 'http://localhost:8000';
+var OTP_BACKEND_URL = 'https://YOUR-BACKEND.onrender.com';
 
 var CONSENT_ITEMS = [
   {id:'c1',title:'Health & Symptom Data',desc:'Collection and processing of your menopause symptom data, clinical scores, and health metrics.',required:true,badge:'Sensitive Data'},
